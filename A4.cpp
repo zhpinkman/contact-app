@@ -60,8 +60,6 @@ void write_file(vector<Contact> contacts);
 bool search(string line, vector<Contact> contacts);
 int main()
 {
-	test_id_index();
-	return 0;
 	vector<Contact> contacts;
 	contacts = read_file();
 	string part;
