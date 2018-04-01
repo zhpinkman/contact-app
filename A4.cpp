@@ -345,16 +345,12 @@ bool compare(vector<Contact> contacts, Contact con, int id )
 		if((con.name == contacts[i].name && con.sur_name == contacts[i].sur_name )|| con.phone_number == contacts[i].phone_number || con.email == contacts[i].email)
 		{
 			if(id != i)
-			{
 				return false;
-			}
 		}
 		if(!compare_address(contacts[i].address, con.address))
 		{
 			if(id != i)
-			{
 				return false;
-			}
 		}
 	}
 	return true;
