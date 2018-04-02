@@ -308,8 +308,8 @@ vector<string> part_address(string address)
 	stringstream from_address(address);
 	while(getline(from_address, part, ','))
 	{
-		stringstream ss(part);
-		while(ss >> part)
+		stringstream input(part);
+		while(input >> part)
 			parts.push_back(part);
 	}
 	return parts;
