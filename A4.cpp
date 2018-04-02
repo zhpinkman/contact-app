@@ -12,7 +12,6 @@ struct Contact
 {
 	int id;
 	bool is_contact;
-	int parts;
 	string phone_number;
 	string name;
 	string sur_name;
