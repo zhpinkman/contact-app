@@ -8,6 +8,8 @@
 #define MAX_NUMBER 11
 #define ASCII 48
 #define ALLOWABLE_PARTS 2
+#define FIRST_NUM '0'
+#define LAST_NUM '9'
 using namespace std;
 struct Contact
 {
@@ -97,8 +99,8 @@ bool search(string line, vector<Contact> contacts)
 {
 	string text;
 	int parts = 0;
-	stringstream ss(line);
-	while(ss >> text)
+	stringstream input(line);
+	while(input >> text)
 		parts ++;
 	if(parts != ALLOWABLE_PARTS)
 		return false;
@@ -116,8 +118,8 @@ vector<Contact> Delete(string line, vector<Contact> contacts)
 	string part;
 	int index;
 	int id;
-	stringstream ss(line);
-	while(ss >> part)
+	stringstream input(line);
+	while(input >> part)
 		parts ++;
 	if(parts != ALLOWABLE_PARTS)
 	{
@@ -140,16 +142,16 @@ vector<Contact> update(string line, vector<Contact> contacts)
 	vector<Contact> list(contacts);
 	int id;	
 	string part;
-	stringstream ss(line);
-	ss >> part;
-	ss >> part;
+	stringstream input(line);
+	input >> part;
+	input >> part;
 	id = string_to_int(part);
 	if(!valid_id(id, contacts))
 	{
 		cout << "Command Failed" << endl;
 		return list;
 	}
-	getline(ss, line);
+	getline(input, line);
 	if(check_empty(line))
 	{
 		cout << "Command Failed" << endl;
@@ -171,9 +173,9 @@ vector<Contact> add(string line, vector<Contact> contacts)
 {
 	vector<Contact> list(contacts);
 	string part;
-	stringstream ss(line);
-	ss >> part;
-	getline(ss, line);
+	stringstream input(line);
+	input >> part;
+	getline(input, line);
 	Contact NEW = new_contact(line);
 	if(compare(contacts, NEW, -1) && NEW.is_contact  && ok_to_add(NEW))
 	{
@@ -235,15 +237,15 @@ Contact fill_contact(Contact NEW, Contact to_update)
 {
 	Contact con = NEW;
 	con.id = to_update.id;
-	if(NEW.name == "")
+	if(check_empty(NEW.name))
 		con.name = to_update.name;
-	if(NEW.sur_name == "")
+	if(check_empty(NEW.sur_name))
 		con.sur_name = to_update.sur_name;
-	if(NEW.email == "")
+	if(check_empty(NEW.email))
 		con.email = to_update.email;
-	if(NEW.phone_number == "")
+	if(check_empty(NEW.phone_number))
 		con.phone_number = to_update.phone_number;
-	if(NEW.address == "");
+	if(check_empty(NEW.address))
 		con.address = to_update.address;
 	return con;	
 }
@@ -594,11 +596,11 @@ bool is_number(string number)
 		return false;
 	}
 	for(int i = 0;i < number.size(); i++)
-		if(number[i] > '9' || number[i] < '0')
+		if(number[i] > LAST_NUM || number[i] < FIRST_NUM)
 		{
 			return false;
 		}
-	if(number[0] != '0' || number[1] != '9')
+	if(number[0] != FIRST_NUM || number[1] != LAST_NUM)
 	{
 		
 		return false;
@@ -624,8 +626,13 @@ void test_check_empty()
 }
 bool check_empty(string x)
 {
-	if(x == "" || (( x[0] == '\n' || (x[0] == ' ') && x.size() == 1)))
+	stringstream line(x);
+	string input = "";
+	line >> input;
+	if(input == "")
+	{
 		return true;
+	}
 	else
 		return false;
 }
@@ -640,18 +647,18 @@ vector<Contact> read_file()
 	while(getline(file, line))
 	{
 		con = initialized();
-		stringstream ss(line);
-		getline(ss, line, ',');
+		stringstream input(line);
+		getline(input, line, ',');
 		con.id = string_to_int(line);
-		getline(ss, line, ',');
+		getline(input, line, ',');
 		con.name = line;
-		getline(ss, line, ',');
+		getline(input, line, ',');
 		con.sur_name = line;
-		getline(ss, line, ',');
+		getline(input, line, ',');
 		con.email = line;
-		getline(ss, line, ',');
+		getline(input, line, ',');
 		con.phone_number = line;
-		getline(ss, line);
+		getline(input, line);
 		if(!check_empty(line))
 		{
 			con.address = line;
