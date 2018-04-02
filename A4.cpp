@@ -64,7 +64,6 @@ int main()
 {
 	vector<Contact> contacts;
 	contacts = read_file();
-	string part;
 	string line;
 	string command;
 	while(getline(cin, line))
