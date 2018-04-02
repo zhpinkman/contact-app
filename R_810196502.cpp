@@ -5,7 +5,7 @@
 #include <cmath>
 #include <cassert>
 #include <fstream>
-#define MAX_NUMBER 11
+#define MAX_PHONENUM_SIZE 11
 #define ASCII 48
 #define ALLOWABLE_PARTS 2
 #define FIRST_NUM '0'
@@ -590,7 +590,7 @@ bool is_email(string email)
 }	
 bool is_number(string number)
 {
-	if(number.size() != MAX_NUMBER)
+	if(number.size() != MAX_PHONENUM_SIZE)
 	{
 		return false;
 	}
