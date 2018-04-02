@@ -7,6 +7,7 @@
 #include <fstream>
 #define MAX_NUMBER 11
 #define ASCII 48
+#define ALLOWABLE_PARTS 2
 using namespace std;
 struct Contact
 {
@@ -95,11 +96,11 @@ int main()
 bool search(string line, vector<Contact> contacts)
 {
 	string text;
-	int check = 0;
+	int parts = 0;
 	stringstream ss(line);
 	while(ss >> text)
-		check ++;
-	if(check != 2)
+		parts ++;
+	if(parts != ALLOWABLE_PARTS)
 		return false;
 	vector<int> index = search_index(contacts, text);
 	if(index.size() == 0)
@@ -111,14 +112,14 @@ bool search(string line, vector<Contact> contacts)
 vector<Contact> Delete(string line, vector<Contact> contacts)
 {
 	vector<Contact> list(contacts);	
-	int check = 0;
+	int parts = 0;
 	string part;
 	int index;
 	int id;
 	stringstream ss(line);
 	while(ss >> part)
-		check ++;
-	if(check != 2)
+		parts ++;
+	if(parts != ALLOWABLE_PARTS)
 	{
 		cout << "Command Failed" << endl;
 		return list;
