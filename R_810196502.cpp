@@ -10,6 +10,17 @@
 #define ALLOWABLE_PARTS 2
 #define FIRST_NUM '0'
 #define LAST_NUM '9'
+#define EMPTY_STRING ""
+#define FIRST_NAME "f"
+#define LAST_NAME "l"
+#define EMAIL "e"
+#define PHONENUM "p"
+#define ADDRESS "a"
+#define FIRST_NAME_ "-f"
+#define LAST_NAME_ "-l"
+#define EMAIL_ "-e"
+#define PHONENUM_ "-p"
+#define ADDRESS_ "-a"
 using namespace std;
 struct Contact
 {
@@ -40,6 +51,8 @@ bool is_command(string command);
 bool is_info(string info, bool after_address); 
 bool is_number(string number); 
 bool compare(vector<Contact> contacts, Contact con, int id);
+void OK();
+void FAILED();
 string get_command(string line); 
 Contact initialized();  
 Contact new_contact(string line); 
@@ -49,10 +62,10 @@ bool check_empty(string x);
 vector<string> part_address(string address); 
 void print_contacts(vector<Contact> contacts);
 int string_to_int(string id); 
-int id_index(vector<Contact> contacts, int id); 
+int find_id_index(vector<Contact> contacts, int id); 
 Contact fill_contact(Contact NEW, Contact to_update);
 void print_contact(Contact temp); 
-bool valid_id(int id, vector<Contact> contacts); 
+bool is_valid_id(int id, vector<Contact> contacts); 
 vector<int> search_index(vector<Contact>contacts, string text);
 vector<Contact> add(string line, vector<Contact> contacts);
 vector<Contact> update(string line, vector<Contact> contacts);
@@ -71,7 +84,7 @@ int main()
 		command = get_command(line);
 		if(!is_command(command))
 		{
-			cout << "Command Failed" << endl;
+			FAILED();
 			continue;
 		}
 		if(command == "add")
@@ -122,18 +135,18 @@ vector<Contact> Delete(string line, vector<Contact> contacts)
 		parts ++;
 	if(parts != ALLOWABLE_PARTS)
 	{
-		cout << "Command Failed" << endl;
+		FAILED();
 		return list;
 	}
 	id = string_to_int(part);
-	if(!valid_id(id, contacts))
+	if(!is_valid_id(id, contacts))
 	{
-		cout << "Command Failed" << endl;
+		FAILED();
 		return list;
 	}
-	index = id_index(list, id);
+	index = find_id_index(list, id);
 	list.erase(list.begin() + index);
-	cout << "Command Ok" << endl;
+	OK();
 	return list;
 }
 vector<Contact> update(string line, vector<Contact> contacts)
@@ -145,27 +158,27 @@ vector<Contact> update(string line, vector<Contact> contacts)
 	input >> part;
 	input >> part;
 	id = string_to_int(part);
-	if(!valid_id(id, contacts))
+	if(!is_valid_id(id, contacts))
 	{
-		cout << "Command Failed" << endl;
+		FAILED();
 		return list;
 	}
 	getline(input, line);
 	if(check_empty(line))
 	{
-		cout << "Command Failed" << endl;
+		FAILED();
 		return list;
 	}
-	Contact to_update = contacts[id_index(contacts, id)];
+	Contact to_update = contacts[find_id_index(contacts, id)];
 	Contact NEW = new_contact(line);
 	NEW = fill_contact(NEW, to_update);
 	if(compare(contacts, NEW, id) && NEW.is_contact)
 	{
-		list[id_index(contacts, id)] = NEW;
-		cout << "Command Ok" << endl;
+		list[find_id_index(contacts, id)] = NEW;
+		OK();
 	}
 	else
-		cout << "Command Failed" << endl;
+		FAILED();
 	return list;
 }
 vector<Contact> add(string line, vector<Contact> contacts)
@@ -183,10 +196,10 @@ vector<Contact> add(string line, vector<Contact> contacts)
 		else
 			NEW.id = contacts.back().id + 1;
 		list.push_back(NEW);
-		cout << "Command Ok" << endl;
+		OK();
 	}
 	else
-		cout << "Command Failed" << endl;	
+		FAILED();
 	return list;
 }
 vector<int> search_index(vector<Contact>contacts, string text)
@@ -213,12 +226,12 @@ void test_valid_id()
 	list.push_back(x);
 	list.push_back(y);
 	list.push_back(z);
-	if(valid_id(1, list) == 1 && valid_id(-1, list) == 0 && valid_id(4, list) == 0)
+	if(is_valid_id(1, list) == 1 && is_valid_id(-1, list) == 0 && is_valid_id(4, list) == 0)
 		cerr << "ok" << endl;
 	else
 		cerr << "failed" << endl;
 }
-bool valid_id(int id, vector<Contact> contacts)
+bool is_valid_id(int id, vector<Contact> contacts)
 {
 	if(id == -1)
 		return false;
@@ -260,12 +273,12 @@ void test_id_index()
 	list.push_back(z);
 	list.push_back(x);
 	list.push_back(y);
-	if(id_index(list, 2) == 0 && id_index(list, 1) == 2)
+	if(find_id_index(list, 2) == 0 && find_id_index(list, 1) == 2)
 		cerr << "ok" << endl;
 	else
 		cerr << "failed" << endl;
 }
-int id_index(vector<Contact> contacts, int id)
+int find_id_index(vector<Contact> contacts, int id)
 {
 	for(int i = 0;i < contacts.size(); i++)
 		if(contacts[i].id == id)
@@ -425,12 +438,12 @@ bool is_info(string info, bool after_address)
 {
 	if(after_address == false)
 	{
-		if(info == "-f" || info == "-l" || info == "-e" || info == "-a" || info == "-p")
+		if(info == FIRST_NAME_ || info == LAST_NAME_ || info == EMAIL_ || info == ADDRESS_ || info == PHONENUM_)
 			return true;
 	}
 	else if(after_address == true)
 	{
-		if(info == "f" || info == "l" || info == "e" || info == "a" || info == "p")
+		if(info == FIRST_NAME || info == LAST_NAME || info == EMAIL || info == ADDRESS || info == PHONENUM)
 			return true;
 	}
 	return false;
@@ -450,7 +463,7 @@ void test_ok_to_add()
 }
 bool ok_to_add(Contact NEW)
 {
-	if(NEW.name == "" || NEW.sur_name == "" || NEW.email == "" || NEW.phone_number == "")
+	if(NEW.name == EMPTY_STRING || NEW.sur_name == EMPTY_STRING || NEW.email == EMPTY_STRING || NEW.phone_number == EMPTY_STRING)
 		return false;
 	else
 		return true;
@@ -465,7 +478,7 @@ void test_new_contact()
 void test_initialized()
 {
 	Contact x = initialized();
-	if(x.is_contact == true && x.id == -1 && x.name == "")
+	if(x.is_contact == true && x.id == -1 && x.name == EMPTY_STRING)
 		cerr << "ok" << endl;
 	else
 		cerr << "failed" << endl;
@@ -474,11 +487,11 @@ Contact initialized()
 {
 	Contact NEW;
 	NEW.id = -1;
-	NEW.name = "";
-	NEW.sur_name = "";
-	NEW.email = "";
-	NEW.phone_number = "";
-	NEW.address = "";
+	NEW.name = EMPTY_STRING;
+	NEW.sur_name = EMPTY_STRING;
+	NEW.email = EMPTY_STRING;
+	NEW.phone_number = EMPTY_STRING;
+	NEW.address = EMPTY_STRING;
 	NEW.is_contact = true;
 	return NEW;
 }
@@ -497,7 +510,7 @@ Contact new_contact(string line)
 			con.is_contact = false;
 			break;
 		}
-		if(info == "-f" ||  (after_address == true && info == "f") )
+		if(info == FIRST_NAME_ ||  (after_address == true && info == FIRST_NAME) )
 		{
 			parse >> part;
 			if(part == info)
@@ -508,7 +521,7 @@ Contact new_contact(string line)
 			con.name = part;
 			after_address = false;
 		}
-		else if(info == "-l" || (after_address == true && info == "l") )
+		else if(info == LAST_NAME_ || (after_address == true && info == LAST_NAME) )
 		{
 			parse >> part;
 			if(part == info)
@@ -519,7 +532,7 @@ Contact new_contact(string line)
 			con.sur_name = part;
 			after_address = false;
 		}
-		else if(info == "-e" ||  (after_address == true && info == "e") )
+		else if(info == EMAIL_ ||  (after_address == true && info == EMAIL) )
 		{
 			parse >> part;
 			if(part == info)
@@ -535,7 +548,7 @@ Contact new_contact(string line)
 			con.email = part;
 			after_address = false;
 		}
-		else if(info == "-p" || (after_address == true && info == "p") )
+		else if(info == PHONENUM_ || (after_address == true && info == PHONENUM) )
 		{
 			parse >> part;
 			if(part == info)
@@ -551,7 +564,7 @@ Contact new_contact(string line)
 			con.phone_number = part;
 			after_address = false;
 		}
-		else if(info == "-a" ||  (after_address == true && info == "a") )
+		else if(info == ADDRESS_ ||  (after_address == true && info == ADDRESS) )
 		{
 			getline(parse, part, '-');
 			if(part == info)
@@ -615,7 +628,7 @@ void print_contacts(vector<Contact> contacts)
 }
 void test_check_empty()
 {
-	string x = "";
+	string x = EMPTY_STRING;
 	string y = " ";
 	string z = ";ld";
 	if(check_empty(x) == 1 && check_empty(y) == 1 && check_empty(z) == 0)
@@ -626,9 +639,9 @@ void test_check_empty()
 bool check_empty(string x)
 {
 	stringstream line(x);
-	string input = "";
+	string input = EMPTY_STRING;
 	line >> input;
-	if(input == "")
+	if(input == EMPTY_STRING)
 	{
 		return true;
 	}
@@ -673,4 +686,12 @@ void write_file(vector<Contact> contacts)
 	{
 		file <<contacts[i].id << "," << contacts[i].name << "," << contacts[i].sur_name << "," << contacts[i].email << "," << contacts[i].phone_number << "," << contacts[i].address << endl;
 	}
+}
+void OK()
+{
+	cout << "Command Ok" << endl;
+}
+void FAILED()
+{
+	cout << "Command Failed" << endl;
 }
