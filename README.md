@@ -1,1 +1,3 @@
-# R_810196502
+### Contacts app
+
+A simple Contact application implemented in C++ language as part of the Advanced Programming course. There are different functionalities implemented such as deletion, addition, searching, and updating the user profiles. 
